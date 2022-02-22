@@ -1,6 +1,6 @@
 import pandas as pd
 
-AWS_BUCKET_PATH = "s3://wagon-public-datasets/taxi-fare-train.csv"
+DATA_PATH = "\\wsl$\Ubuntu\home\rei\code\rmelbardis\TaxiFareModel\raw_data\train.csv"
 
 
 def get_data(nrows=10_000):

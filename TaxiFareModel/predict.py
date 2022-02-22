@@ -6,13 +6,13 @@ import pandas as pd
 
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-PATH_TO_LOCAL_MODEL = 'model.joblib'
+PATH_TO_LOCAL_MODEL = 'XGBoost_v1.joblib'
 
 def get_test_data():
     """method to get the training data (or a portion of it) from google cloud bucket
     To predict we can either obtain predictions from train data or from test data"""
     # Add Client() here
-    path = "data/test.csv"
+    path = "raw_data/test.csv"
     df = pd.read_csv(path)
     return df
 
@@ -49,4 +49,4 @@ def generate_submission_csv(kaggle_upload=False):
 
 
 if __name__ == '__main__':
-    generate_submission_csv(kaggle_upload=False)
+    generate_submission_csv(kaggle_upload=True)

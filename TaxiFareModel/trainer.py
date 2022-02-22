@@ -21,7 +21,7 @@ MLFLOW_URI = "https://mlflow.lewagon.co/"
 ### import model and define
 from xgboost import XGBRegressor
 model_type = XGBRegressor(max_depth=10, n_estimators=100, learning_rate=0.1)
-model_name_version = 'XGBoost v1'
+model_name_version = 'XGBoost_v1'
 estimator_name = 'XGBRegressor, depth=10, n=100, lrate=0.1'
 ###
 
