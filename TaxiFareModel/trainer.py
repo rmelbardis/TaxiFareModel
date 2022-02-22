@@ -5,6 +5,7 @@ import pandas as pd
 from memoized_property import memoized_property
 import mlflow
 from mlflow.tracking import MlflowClient
+import joblib
 
 from TaxiFareModel.utils import compute_rmse
 from TaxiFareModel.encoders import TimeFeaturesEncoder, DistanceTransformer
@@ -12,15 +13,21 @@ from TaxiFareModel.data import get_data, clean_data
 
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 
 MLFLOW_URI = "https://mlflow.lewagon.co/"
 
+### import model and define
+from xgboost import XGBRegressor
+model_type = XGBRegressor(max_depth=10, n_estimators=100, learning_rate=0.1)
+model_name_version = 'XGBoost v1'
+estimator_name = 'XGBRegressor, depth=10, n=100, lrate=0.1'
+###
+
 class Trainer():
 
-    def __init__(self, X, y, model_name_version):
+    def __init__(self, X, y, model, model_name_version='test', log_mode=False):
         """
             X: pandas DataFrame
             y: pandas Series
@@ -28,7 +35,10 @@ class Trainer():
         self.pipeline = None
         self.X = X
         self.y = y
-        self.experiment_name = f'[UK] [London] [rmelbardis] {model_name_version}'
+        self.model = model
+        self.model_name_version = model_name_version
+        self.log_mode = log_mode
+        self.experiment_name = f'[UK] [London] [rmelbardis] {self.model_name_version}'
 
     def set_pipeline(self):
         """defines the pipeline as a class attribute"""
@@ -46,7 +56,7 @@ class Trainer():
         ], remainder="drop")
         full_pipeline = Pipeline([
             ('preproc', preproc_pipe),
-            ('linear_model', LinearRegression())
+            (f'{self.model_name_version}', self.model)
         ])
         return full_pipeline
 
@@ -60,14 +70,18 @@ class Trainer():
         """evaluates the pipeline on df_test and return the RMSE"""
         self.y_pred = self.pipeline.predict(X_test)
         self.rmse = compute_rmse(self.y_pred, y_test)
-        self.mlflow_log_param('estimator', 'LinReg')
-        self.mlflow_log_metric('rmse', self.rmse)
+        if self.log_mode:
+            self.mlflow_log_param('estimator', estimator_name)
+            self.mlflow_log_metric('rmse', self.rmse)
         print(self.rmse)
         return self.rmse
 
+
+    """
+    Submit metrics to MLFlow
+    """
     @memoized_property
     def mlflow_client(self):
-
         mlflow.set_tracking_uri(MLFLOW_URI)
         return MlflowClient()
 
@@ -88,13 +102,17 @@ class Trainer():
     def mlflow_log_metric(self, key, value):
         self.mlflow_client.log_metric(self.mlflow_run.info.run_id, key, value)
 
+    def save_model(self):
+        """ Save the trained model into a model.joblib file """
+        joblib.dump(self.pipeline, f'{model_name_version}.joblib')
 
 if __name__ == "__main__":
-    df = get_data()
+    df = get_data(100_000)
     df = clean_data(df)
     X = df.drop(columns='fare_amount')
     y = df['fare_amount']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    model = Trainer(X_train, y_train, 'LinReg v1.0')
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+    model = Trainer(X_train, y_train, model_type, model_name_version=model_name_version, log_mode=True)
     model.run()
     model.evaluate(X_test, y_test)
+    model.save_model()

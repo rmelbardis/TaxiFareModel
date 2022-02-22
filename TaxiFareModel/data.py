@@ -14,7 +14,7 @@ def clean_data(df, test=False):
     df = df[(df.dropoff_latitude != 0) | (df.dropoff_longitude != 0)]
     df = df[(df.pickup_latitude != 0) | (df.pickup_longitude != 0)]
     if "fare_amount" in list(df):
-        df = df[df.fare_amount.between(0, 4000)]
+        df = df[df.fare_amount.between(0, 60)]
     df = df[df.passenger_count < 8]
     df = df[df.passenger_count >= 0]
     df = df[df["pickup_latitude"].between(left=40, right=42)]

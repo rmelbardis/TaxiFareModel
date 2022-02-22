@@ -1,7 +1,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
 # from TaxiFareModel.data import get_data, clean_data
-from TaxiFareModel.utils import haversine_vectorized
+from TaxiFareModel.utils import haversine_vectorized, minkowski_distance_gps
 
 class TimeFeaturesEncoder(BaseEstimator, TransformerMixin):
     """
@@ -31,7 +31,7 @@ class TimeFeaturesEncoder(BaseEstimator, TransformerMixin):
 
 class DistanceTransformer(BaseEstimator, TransformerMixin):
     """
-        Computes the haversine distance between two GPS points.
+        Computes the haversine, manhattan and euclidean distances between two GPS points.
     """
 
     def __init__(self,
@@ -57,7 +57,11 @@ class DistanceTransformer(BaseEstimator, TransformerMixin):
             end_lat=self.end_lat,
             end_lon=self.end_lon
         )
-        return X_[['distance']]
+        X_['euclidean_distance'] = minkowski_distance_gps(X_['pickup_latitude'], X_['dropoff_latitude'],
+                                              X_['pickup_longitude'], X_['dropoff_longitude'], 2)
+        X_['manhattan_distance'] = minkowski_distance_gps(X_['pickup_latitude'], X_['dropoff_latitude'],
+                                              X_['pickup_longitude'], X_['dropoff_longitude'], 1)
+        return X_[['distance', 'euclidean_distance', 'manhattan_distance']]
 
 # if __name__ == '__main__':
 #     df = clean_data(get_data(nrows=10_000))
