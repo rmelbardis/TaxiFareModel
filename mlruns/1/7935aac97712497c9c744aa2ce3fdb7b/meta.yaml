@@ -1,0 +1,15 @@
+artifact_uri: file:///home/rei/code/rmelbardis/TaxiFareModel/mlruns/1/7935aac97712497c9c744aa2ce3fdb7b/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+name: ''
+run_id: 7935aac97712497c9c744aa2ce3fdb7b
+run_uuid: 7935aac97712497c9c744aa2ce3fdb7b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1645532395395
+status: 1
+tags: []
+user_id: unknown
