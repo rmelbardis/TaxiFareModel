@@ -1,13 +1,10 @@
 import pandas as pd
+from TaxiFareModel import params
 
-DATA_PATH = "\\wsl$\Ubuntu\home\rei\code\rmelbardis\TaxiFareModel\raw_data\train.csv"
-
-
-def get_data(nrows=10_000):
-    '''returns a DataFrame with nrows from s3 bucket'''
-    df = pd.read_csv(DATA_PATH, nrows=nrows)
+def get_data(nrows=1000):
+    """method to get the training data (or a portion of it) from google cloud bucket"""
+    df = pd.read_csv(f"gs://{params.BUCKET_NAME}/{params.BUCKET_TRAIN_DATA_PATH}", nrows=nrows)
     return df
-
 
 def clean_data(df, test=False):
     df = df.dropna(how='any', axis='rows')

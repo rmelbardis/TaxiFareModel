@@ -6,7 +6,8 @@ import pandas as pd
 
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-PATH_TO_LOCAL_MODEL = 'XGBoost_v1.joblib'
+from TaxiFareModel import params
+
 
 def get_test_data():
     """method to get the training data (or a portion of it) from google cloud bucket
