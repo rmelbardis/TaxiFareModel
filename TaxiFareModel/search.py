@@ -1,5 +1,5 @@
 '''
-Cross validates the models passed to mod_dict and outputs negative rmse as score
+Random search with negative rmse as function
 '''
 
 #imports
@@ -7,10 +7,10 @@ Cross validates the models passed to mod_dict and outputs negative rmse as score
 from TaxiFareModel.trainer import Trainer
 from TaxiFareModel.data import get_data, clean_data
 
-from sklearn.model_selection import cross_val_score
-from sklearn.svm import SVR
+from sklearn.model_selection import RandomizedSearchCV
+from xgboost import XGBRegressor
 
-def cv_score(X, y, mod_dict):
+def rand_scores(X, y, mod_dict):
     res_dict = {}
     for k, v in mod_dict.items():
         model = Trainer(X, y, v)

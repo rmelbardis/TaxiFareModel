@@ -5,7 +5,7 @@ DATA_PATH = "\\wsl$\Ubuntu\home\rei\code\rmelbardis\TaxiFareModel\raw_data\train
 
 def get_data(nrows=10_000):
     '''returns a DataFrame with nrows from s3 bucket'''
-    df = pd.read_csv(AWS_BUCKET_PATH, nrows=nrows)
+    df = pd.read_csv(DATA_PATH, nrows=nrows)
     return df
 
 
