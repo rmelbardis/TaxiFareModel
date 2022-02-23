@@ -118,7 +118,8 @@ class Trainer():
         print(f"uploaded model.joblib to gcp cloud storage under \n => {params.STORAGE_LOCATION}")
 
 if __name__ == "__main__":
-    df = get_data(1000)
+    N = 2_000_000
+    df = get_data(N)
     df = clean_data(df)
     X = df.drop(columns='fare_amount')
     y = df['fare_amount']
